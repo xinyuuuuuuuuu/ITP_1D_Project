@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Built phone preview pages (made by Skeletal-Sample/phone_preview/build.py)
+Skeletal-Sample/phone_preview/usj_guide.html
+Skeletal-Sample/phone_preview/usj_guide_local.html

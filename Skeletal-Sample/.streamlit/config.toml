@@ -1,0 +1,8 @@
+# Colours of the app, matching the park map.
+# Streamlit reads this file when the app is started from inside this folder.
+[theme]
+base = "dark"
+primaryColor = "#e8c66a"
+backgroundColor = "#070d10"
+secondaryBackgroundColor = "#101b1f"
+textColor = "#e6eeec"
