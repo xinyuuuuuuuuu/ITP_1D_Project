@@ -25,7 +25,7 @@ ISLAND_SHAPE = ("M30 452 C2 410 2 320 14 262 C18 200 30 120 82 100 "
                 "C125 62 175 28 245 32 C305 30 318 88 348 118 "
                 "C404 138 416 210 402 262 C416 320 416 396 378 428 "
                 "C330 462 265 466 205 462 C145 466 72 470 30 452 Z")
-LAGOON = {"x": 150, "y": 350, "rx": 52, "ry": 28}
+LAGOON = {"x": 195, "y": 220, "rx": 52, "ry": 28}
 
 # ---------- The landmark of every zone ----------
 # tint: the colour of the district.  art: a small drawing, about 40 pixels
@@ -42,45 +42,12 @@ LANDMARKS = {
         '<ellipse cx="0" cy="-12" rx="4.5" ry="11" fill="none" stroke="#eef3ee"/>'
         '<path d="M-16 -9Q0 -20 16 -9" fill="none" stroke="#e8c66a" stroke-width="2.2" stroke-linecap="round"/>'
         '<path d="M-6 6H6L4 0H-4Z" fill="#eef3ee"/>'},
-    "New York": {"tint": "#7f95b8", "art":       # a city skyline
-        '<rect x="-15" y="-12" width="8" height="18" fill="{T}" fill-opacity="0.5" stroke="#eef3ee" stroke-width="1.2"/>'
-        '<rect x="-5" y="-24" width="10" height="30" fill="{T}" fill-opacity="0.7" stroke="#eef3ee" stroke-width="1.2"/>'
-        '<path d="M0 -24V-31" stroke="#eef3ee" stroke-width="1.2"/>'
-        '<rect x="7" y="-16" width="8" height="22" fill="{T}" fill-opacity="0.5" stroke="#eef3ee" stroke-width="1.2"/>'
-        '<path class="pm-blink" d="M-2 -19h4M-2 -14h4M-2 -9h4M-2 -4h4M-13 -7h4M-13 -2h4M9 -11h4M9 -6h4M9 -1h4" stroke="#e8c66a"/>'},
-    "San Francisco": {"tint": "#c9705f", "art":  # a suspension bridge
-        '<path d="M-20 3H20" stroke="#eef3ee" stroke-width="2"/>'
-        '<path d="M-9 6V-20M9 6V-20" stroke="{T}" stroke-width="3.2"/>'
-        '<path d="M-11 -20h4M7 -20h4" stroke="#eef3ee" stroke-width="1.2"/>'
-        '<path d="M-20 1Q-14 -3 -9 -19Q0 2 9 -19Q14 -3 20 1" fill="none" stroke="#eef3ee" stroke-width="1.1"/>'
-        '<path d="M-5 -8V3M0 -4V3M5 -8V3M-14 -6V3M14 -6V3" stroke="#eef3ee" stroke-width="0.6" stroke-opacity="0.7"/>'},
-    "Minion Park": {"tint": "#e2c94b", "art":    # a yellow helper with one goggle
-        '<rect x="-9" y="-24" width="18" height="30" rx="9" fill="{T}" fill-opacity="0.9" stroke="#eef3ee" stroke-width="1.2"/>'
-        '<path d="M-9 -3H9A9 9 0 0 1 -9 -3Z" fill="#3b6ea5"/>'
-        '<path d="M-9 -13H9" stroke="#12262b" stroke-width="2.4"/>'
-        '<circle cx="0" cy="-13" r="5" fill="#eef3ee" stroke="#9fb4b3" stroke-width="1.6"/>'
-        '<circle cx="0" cy="-13" r="1.8" fill="#12262b"/>'},
     "Jurassic Park": {"tint": "#5fae7a", "art":  # a volcano and a palm tree
         '<path d="M-20 6L-6 -18L-2 -14L2 -18L16 6Z" fill="{T}" fill-opacity="0.6" stroke="#eef3ee" stroke-width="1.2" stroke-linejoin="round"/>'
         '<path d="M-6 -18L-2 -14L2 -18L4 -13L-1 -9L-7 -13Z" fill="#ef7a6d" fill-opacity="0.85"/>'
         '<circle class="pm-smoke" cx="-2" cy="-23" r="3" fill="#eef3ee" fill-opacity="0.5"/>'
         '<path d="M15 6Q14 -4 17 -10" fill="none" stroke="#eef3ee" stroke-width="1.4"/>'
         '<path d="M17 -10Q11 -14 8 -9M17 -10Q22 -15 25 -9M17 -10Q16 -17 11 -17M17 -10Q20 -17 24 -15" fill="none" stroke="#7fd08f" stroke-width="1.4" stroke-linecap="round"/>'},
-    "Amity Village": {"tint": "#5fa7c4", "art":  # a lighthouse and a shark fin
-        '<path d="M-8 6L-5 -16H3L6 6Z" fill="#eef3ee"/>'
-        '<path d="M-6.4 -5H4.4M-7.2 1H5.2" stroke="{T}" stroke-width="3"/>'
-        '<rect class="pm-blink" x="-5" y="-22" width="8" height="6" fill="#e8c66a"/>'
-        '<path d="M-6 -22L-1 -27L4 -22Z" fill="{T}"/>'
-        '<path d="M10 6Q12 -6 20 -8Q17 -1 19 6Z" fill="#9fb4b3" stroke="#eef3ee"/>'
-        '<path d="M6 7q3 -3 6 0t6 0" fill="none" stroke="#6fe3e1" stroke-width="1.1"/>'},
-    "Universal Wonderland": {"tint": "#d48fb5", "art":   # a turning ferris wheel
-        '<path d="M0 -12L-9 6M0 -12L9 6M-11 6H11" stroke="#eef3ee" stroke-width="1.5" stroke-linecap="round"/>'
-        '<g class="pm-spin"><circle cx="0" cy="-12" r="13" fill="{T}" fill-opacity="0.18" stroke="#eef3ee" stroke-width="1.4"/>'
-        '<path d="M-13 -12H13M0 -25V1M-9.2 -21.2L9.2 -2.8M-9.2 -2.8L9.2 -21.2" stroke="#eef3ee" stroke-width="0.8"/>'
-        '<g fill="{T}" stroke="#eef3ee" stroke-width="0.8"><circle cx="13" cy="-12" r="2.6"/><circle cx="9.2" cy="-2.8" r="2.6"/>'
-        '<circle cx="0" cy="1" r="2.6"/><circle cx="-9.2" cy="-2.8" r="2.6"/><circle cx="-13" cy="-12" r="2.6"/>'
-        '<circle cx="-9.2" cy="-21.2" r="2.6"/><circle cx="0" cy="-25" r="2.6"/><circle cx="9.2" cy="-21.2" r="2.6"/></g></g>'
-        '<circle cx="0" cy="-12" r="2.2" fill="#e8c66a"/>'},
     "Wizarding World of Harry Potter": {"tint": "#8f7fc9", "art":   # a castle
         '<rect x="-12" y="-10" width="24" height="16" fill="{T}" fill-opacity="0.6" stroke="#eef3ee" stroke-width="1.2"/>'
         '<rect x="-16" y="-16" width="7" height="22" fill="{T}" fill-opacity="0.8" stroke="#eef3ee" stroke-width="1.2"/>'
@@ -414,7 +381,7 @@ if __name__ == "__main__":
     # Route view: one glowing path per walked road, every step number is drawn.
     park = Park()
     recommender = RouteRecommender(park, data.SCORE_WEIGHTS)
-    preferences = Preferences(["thrill"], ["JAWS"], False, False, 240)
+    preferences = Preferences(["thrill"], ["Dino Splash Rapids"], False, 240)
     route = recommender.recommend(preferences, "Hollywood", 12, "Sunny")
     route_svg = build_map_svg("Hollywood", {}, route)
     walked = 0

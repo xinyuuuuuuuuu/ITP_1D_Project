@@ -63,7 +63,6 @@ def describe_route(route):
 
 def build_context(park, zone, hour, weather, preferences, route):
     """Write everything the model needs to know as one piece of text."""
-    has_express = preferences is not None and preferences.has_express
     lines = [
         f"You are the friendly guide of the theme park {data.PARK_NAME}.",
         "Answer in at most 4 short sentences. Use only the facts below.",
@@ -77,7 +76,7 @@ def build_context(park, zone, hour, weather, preferences, route):
         status = "open"
         if not ride.is_open(weather):
             status = "closed because of rain"
-        lines.append(f"- {ride.name} ({ride.zone}), {ride.get_wait(hour, has_express)} min, "
+        lines.append(f"- {ride.name} ({ride.zone}), {ride.get_wait(hour)} min, "
                      f"{status}, tags: {ride.detail}")
 
     lines.append("")
@@ -100,7 +99,6 @@ def build_context(park, zone, hour, weather, preferences, route):
         lines.append(f"Survey: interests {preferences.interests}, "
                      f"must-do {preferences.favourites}, "
                      f"avoid water {preferences.avoid_water}, "
-                     f"express pass {preferences.has_express}, "
                      f"time {preferences.minutes_available} min.")
         lines.append("Suggested route:")
         lines.append(describe_route(route))
@@ -127,7 +125,6 @@ def ask_model(question, history, context):
 def offline_reply(question, park, zone, hour, weather, preferences, route):
     """Answer with simple keyword rules (no language model needed)."""
     question = question.lower()
-    has_express = preferences is not None and preferences.has_express
 
     # Rule 1: looking for a kind of place -> the nearest ones.
     for keyword in KEYWORDS:
@@ -158,7 +155,7 @@ def offline_reply(question, park, zone, hour, weather, preferences, route):
             if len(word) >= 4 and word not in COMMON_WORDS and word in question:
                 if ride.is_open(weather):
                     lines.append(f"- {ride.name} ({ride.zone}): "
-                                 f"{ride.get_wait(hour, has_express)} min queue")
+                                 f"{ride.get_wait(hour)} min queue")
                 else:
                     lines.append(f"- {ride.name}: closed because of the rain")
                 break   # one line per ride is enough
@@ -181,7 +178,7 @@ def offline_reply(question, park, zone, hour, weather, preferences, route):
                 open_rides.append(ride)
 
         def wait_of(ride):
-            return ride.get_wait(hour, has_express)
+            return ride.get_wait(hour)
 
         lines = [f"Shortest queues at {hour}:00:"]
         for ride in sorted(open_rides, key=wait_of)[:3]:
@@ -210,7 +207,7 @@ def get_reply(question, history, park, zone, hour, weather, preferences, route):
 if __name__ == "__main__":
     test_park = park_module.Park()
     recommender = park_module.RouteRecommender(test_park, data.SCORE_WEIGHTS)
-    prefs = park_module.Preferences(["thrill"], ["JAWS"], False, False, 240)
+    prefs = park_module.Preferences(["thrill"], ["Dino Splash Rapids"], False, 240)
     test_route = recommender.recommend(prefs, "Hollywood", 12, "Sunny")
 
     def ask(question, weather="Sunny", preferences=prefs, route=test_route):
@@ -222,9 +219,9 @@ if __name__ == "__main__":
     assert "First Aid Post" in ask("my friend is hurt")
     assert "108 min" in ask("how long is mario kart")
     assert "closed" in ask("is the flying dinosaur open", weather="Rainy")
-    assert "1. JAWS" in ask("what is my route")
+    assert "1. Dino Splash Rapids" in ask("what is my route")
     assert "survey" in ask("what is my route", preferences=None, route=[])
-    assert "Flying Snoopy" in ask("which queue is shortest")
+    assert "Hogwarts Castle Tour" in ask("which queue is shortest")
     assert "I can help" in ask("hello")
     # "weather" contains "eat", but it must not be treated as a food question.
     assert "sunny" in ask("what's the weather like?")
@@ -233,7 +230,7 @@ if __name__ == "__main__":
 
     # The context for the model mentions the weights and the route.
     context = build_context(test_park, "Hollywood", 12, "Sunny", prefs, test_route)
-    assert "favourite" in context and "1. JAWS" in context
+    assert "favourite" in context and "1. Dino Splash Rapids" in context
 
     # A model that cannot be reached must fall back to the offline rules.
     os.environ["OPENAI_API_KEY"] = "test"

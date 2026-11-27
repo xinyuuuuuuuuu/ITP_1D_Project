@@ -137,10 +137,6 @@ def show_map_section():
     zone = st.session_state["zone"]
     hour = st.session_state["hour"]
     weather = st.session_state["weather"]
-    # Use the Express Pass answer from the survey, if it has been answered.
-    preferences = st.session_state["preferences"]
-    has_express = preferences is not None and preferences.has_express
-
     search_text = st.text_input("Search", placeholder="🔍 Search rides, food, shops...",
                                 label_visibility="collapsed")
     category = st.pills("Category", list(data.CATEGORY_ICONS.keys()), key="category",
@@ -175,7 +171,7 @@ def show_map_section():
                 # Rides also show their queue right now.
                 if place.category == "Rides":
                     if place.is_open(weather):
-                        wait = place.get_wait(hour, has_express)
+                        wait = place.get_wait(hour)
                         st.caption(f"{WAIT_ICONS[get_wait_label(wait)]} {wait} min queue at {hour}:00")
                     else:
                         st.caption("⛔ Closed because of the rain")
@@ -194,11 +190,10 @@ def show_survey():
         favourites = st.multiselect("Must-do rides", ride_names)
         minutes_available = st.slider("Time you have (minutes)", 30, 480, 180, step=15)
         avoid_water = st.toggle("I don't want to get wet")
-        has_express = st.toggle("I have an Express Pass")
         submitted = st.form_submit_button("Suggest my route", type="primary", width="stretch")
     if submitted:
         st.session_state["preferences"] = Preferences(
-            interests, favourites, avoid_water, has_express, minutes_available)
+            interests, favourites, avoid_water, minutes_available)
         st.rerun()
 
 

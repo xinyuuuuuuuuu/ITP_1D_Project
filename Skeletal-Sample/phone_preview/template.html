@@ -310,9 +310,8 @@ function waitLabel(wait) {
 }
 const rides = D.RIDES.map(r => ({ ...r, category: "Rides", detail: r.tags.join(", ") }));
 const places = rides.concat(D.PLACES);
-function getWait(ride, hour, express) {
+function getWait(ride, hour) {
   let wait = ride.base_wait * D.CROWD_BY_HOUR[hour];
-  if (express) wait = wait * D.EXPRESS_WAIT_FACTOR;
   return pyRound(wait);
 }
 function isOpen(ride, weather) { return !(weather === "Rainy" && !ride.indoor); }
@@ -382,7 +381,7 @@ function rankRides(prefs, fromZone, hour, weather, doneNames) {
     if (doneNames.includes(ride.name)) continue;
     if (!isCandidate(ride, prefs, weather)) continue;
     const sp = shortestPath(fromZone, ride.zone);
-    const wait = getWait(ride, hour, prefs.hasExpress);
+    const wait = getWait(ride, hour);
     const s = scoreRide(ride, prefs, sp.minutes, wait, weather);
     options.push({ ride, path: sp.path, walk: sp.minutes, wait, score: s.score, reasons: s.reasons,
                    total: sp.minutes + wait + ride.duration });
@@ -413,7 +412,6 @@ function describeRoute(route) {
 }
 function offlineReply(question, zone, hour, weather, prefs, route) {
   question = question.toLowerCase();
-  const express = prefs !== null && prefs.hasExpress;
   for (const keyword in D.KEYWORDS) {
     if (mentions(question, keyword)) {
       const target = D.KEYWORDS[keyword];
@@ -434,7 +432,7 @@ function offlineReply(question, zone, hour, weather, prefs, route) {
     for (const word of ride.name.toLowerCase().replaceAll("-", " ").replaceAll(":", " ").split(/\s+/)) {
       if (word.length >= 4 && !D.COMMON_WORDS.includes(word) && question.includes(word)) {
         lines.push(isOpen(ride, weather)
-          ? `- ${ride.name} (${ride.zone}): ${getWait(ride, hour, express)} min queue`
+          ? `- ${ride.name} (${ride.zone}): ${getWait(ride, hour)} min queue`
           : `- ${ride.name}: closed because of the rain`);
         break;
       }
@@ -448,9 +446,9 @@ function offlineReply(question, zone, hour, weather, prefs, route) {
   }
   if (mentions(question, "wait") || mentions(question, "queue") || mentions(question, "short")) {
     const open = rides.filter(r => isOpen(r, weather))
-                      .sort((a, b) => getWait(a, hour, express) - getWait(b, hour, express));
+                      .sort((a, b) => getWait(a, hour) - getWait(b, hour));
     lines = [`Shortest queues at ${hour}:00:`];
-    for (const r of open.slice(0, 3)) lines.push(`- ${r.name} (${r.zone}): ${getWait(r, hour, express)} min`);
+    for (const r of open.slice(0, 3)) lines.push(`- ${r.name} (${r.zone}): ${getWait(r, hour)} min`);
     return lines.join("\n");
   }
   return "I can help you find food, shops, restrooms, lockers or first aid, " +
@@ -538,7 +536,6 @@ function renderChrome() {
 }
 
 function mapResults(mode = "pins") {
-  const express = state.prefs !== null && state.prefs.hasExpress;
   const matches = state.search.trim() !== "" ? searchPlaces(state.search)
                 : state.category === null ? places : getPlaces(state.category);
   const nearest = sortByWalk(matches, state.zone);
@@ -553,7 +550,7 @@ function mapResults(mode = "pins") {
     let queue = "";
     if (p.category === "Rides") {
       if (isOpen(p, state.weather)) {
-        const wait = getWait(p, state.hour, express);
+        const wait = getWait(p, state.hour);
         queue = `<p class="num"><span class="dot ${DOT[waitLabel(wait)]}"></span>${wait} min queue at ${state.hour}:00</p>`;
       } else queue = `<p>⛔ Closed because of the rain</p>`;
     }
@@ -588,7 +585,6 @@ function renderSurvey() {
        <div><label for="minutes">Time you have: <span id="minutes-out" class="num">180 min</span></label>
          <input type="range" id="minutes" min="30" max="480" step="15" value="180"></div>
        <label class="check" for="avoid-water"><input type="checkbox" id="avoid-water">I don't want to get wet</label>
-       <label class="check" for="has-express"><input type="checkbox" id="has-express">I have an Express Pass</label>
        <button class="primary" type="submit">Suggest my route</button>
      </form>`;
 }
@@ -663,7 +659,6 @@ function render(animate = true) {
 function openZone(zone) {
   const landmark = M.LANDMARKS[zone] || M.DEFAULT_LANDMARK;
   const walk = shortestPath(state.zone, zone).minutes;
-  const express = state.prefs !== null && state.prefs.hasExpress;
   $("zone-head").innerHTML =
     `<svg viewBox="-26 -40 52 52" aria-hidden="true">${landmark.art.replaceAll("{T}", landmark.tint)}</svg>` +
     `<div><h2>${esc(zone)}</h2><p class="num">${zone === state.zone ? "You are here" : walk + " min walk from you"}</p></div>`;
@@ -676,7 +671,7 @@ function openZone(zone) {
       let extra = esc(p.detail);
       if (category === "Rides") {
         extra = isOpen(p, state.weather)
-          ? `<span class="dot ${DOT[waitLabel(getWait(p, state.hour, express))]}"></span>${getWait(p, state.hour, express)} min queue · ${esc(p.detail)}`
+          ? `<span class="dot ${DOT[waitLabel(getWait(p, state.hour))]}"></span>${getWait(p, state.hour)} min queue · ${esc(p.detail)}`
           : "⛔ Closed because of the rain";
       }
       html += `<div class="item"><b>${esc(p.name)}</b><p class="num">${extra}</p></div>`;
@@ -732,7 +727,6 @@ function start() {
         interests: [...document.querySelectorAll('#interests [aria-pressed="true"]')].map(b => b.dataset.tag),
         favourites: [...document.querySelectorAll('input[name="fav"]:checked')].map(c => c.value),
         avoidWater: $("avoid-water").checked,
-        hasExpress: $("has-express").checked,
         minutes: Number($("minutes").value),
       };
       // Show "Charting your route" for a moment, then reveal the route.
