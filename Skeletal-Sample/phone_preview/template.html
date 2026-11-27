@@ -120,11 +120,6 @@ dialog {
 }
 dialog::backdrop { background: rgba(3, 7, 9, 0.72); }
 .dlg-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.menu { display: flex; flex-direction: column; gap: 8px; }
-.menu button { text-align: left; min-height: 46px; padding: 0 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2); }
-.contact { margin: 14px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 13px; color: var(--muted); }
-.contact div { display: flex; justify-content: space-between; gap: 12px; padding: 2px 0; }
-.contact span:last-child { color: var(--fg); user-select: all; text-align: right; }
 .msg { border-radius: 10px; padding: 9px 12px; margin-bottom: 8px; white-space: pre-line; font-size: 14px; }
 .msg.user { background: var(--panel-2); border: 1px solid var(--line); margin-left: 36px; }
 .msg.bot { border: 1px solid var(--gold); margin-right: 20px; }
@@ -195,19 +190,17 @@ body {
 .charting p { margin: 0; font-family: var(--display); font-weight: 600; font-size: 18px; letter-spacing: 0.3em;
   text-transform: uppercase; color: var(--gold); animation: title-in 0.7s ease backwards; }
 
-/* Menus and the assistant slide up from the bottom edge, like sheets. */
+/* Sheets and the assistant slide up from the bottom edge, like sheets. */
 dialog { margin: auto auto 0; width: 100%; max-width: 480px; max-height: 84%;
   border-radius: 18px 18px 0 0; border-bottom: 0;
   padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -18px 60px rgba(111, 227, 225, 0.14); }
 dialog[open] { animation: sheet-in 0.42s cubic-bezier(.2,.9,.2,1); }
 dialog::backdrop { background: rgba(3, 7, 9, 0.66); backdrop-filter: blur(5px); animation: fade 0.3s ease; }
-.menu button { transition: transform 0.15s, border-color 0.2s; }
-.menu button:active { transform: scale(0.97); border-color: var(--gold); }
-dialog[open] .menu button, dialog[open] .msg, dialog[open] .zone-group { animation: rise 0.5s cubic-bezier(.2,.8,.2,1) backwards; }
-dialog[open] .menu button:nth-child(2), dialog[open] .zone-group:nth-of-type(2) { animation-delay: 0.06s; }
-dialog[open] .menu button:nth-child(3), dialog[open] .zone-group:nth-of-type(3) { animation-delay: 0.12s; }
-dialog[open] .menu button:nth-child(4), dialog[open] .zone-group:nth-of-type(n+4) { animation-delay: 0.18s; }
+dialog[open] .msg, dialog[open] .zone-group { animation: rise 0.5s cubic-bezier(.2,.8,.2,1) backwards; }
+dialog[open] .zone-group:nth-of-type(2) { animation-delay: 0.06s; }
+dialog[open] .zone-group:nth-of-type(3) { animation-delay: 0.12s; }
+dialog[open] .zone-group:nth-of-type(n+4) { animation-delay: 0.18s; }
 
 .zone-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .zone-head svg { width: 62px; height: 62px; flex: none; border-radius: 50%; background: var(--panel-2);
@@ -235,7 +228,6 @@ dialog[open] .menu button:nth-child(4), dialog[open] .zone-group:nth-of-type(n+4
 <div class="app">
   <div class="bar">
     <h1><small>Student project · unofficial</small>USJ Park Guide</h1>
-    <button class="icon-btn" id="menu-open" type="button" aria-label="Open menu">☰</button>
   </div>
 
   <div class="switch" id="switch" role="group" aria-label="Section" data-view="Map">
@@ -254,7 +246,7 @@ dialog[open] .menu button:nth-child(4), dialog[open] .zone-group:nth-of-type(n+4
   </details>
 
   <div id="section"></div>
-  <footer>Phone preview of our Streamlit project. Queues, walking times and contacts are sample data, not official USJ information.</footer>
+  <footer>Phone preview of our Streamlit project. Queues and walking times are sample data, not official USJ information.</footer>
 </div>
 
 <div class="chatbar">
@@ -282,11 +274,6 @@ dialog[open] .menu button:nth-child(4), dialog[open] .zone-group:nth-of-type(n+4
   <div id="zone-body"></div>
 </dialog>
 
-<dialog id="menu">
-  <div class="dlg-head"><h2>Menu</h2><button class="icon-btn" type="button" data-close aria-label="Close">✕</button></div>
-  <div class="menu" id="menu-items"></div>
-  <div class="contact" id="contact"></div>
-</dialog>
 
 <dialog id="chat">
   <div class="dlg-head"><h2>Park assistant</h2><button class="icon-btn" type="button" data-close aria-label="Close">✕</button></div>
@@ -688,10 +675,6 @@ function start() {
   $("zone").innerHTML = Object.keys(D.ZONES).map(z => `<option>${esc(z)}</option>`).join("");
   $("zone").value = state.zone;
   $("hour").value = HOURS.indexOf(state.hour);
-  $("menu-items").innerHTML = D.MENU_CATEGORIES.map(c =>
-    `<button type="button" data-menu="${c}">${D.CATEGORY_ICONS[c]} ${c}</button>`).join("");
-  $("contact").innerHTML = Object.keys(D.CONTACT).map(k =>
-    `<div><span>${esc(k)}</span><span>${esc(D.CONTACT[k])}</span></div>`).join("");
 
   document.addEventListener("click", e => {
     const hit = e.target.closest("[data-zone]");
@@ -705,11 +688,9 @@ function start() {
       state.search = ""; render();
     }
     else if (t.dataset.tag) t.setAttribute("aria-pressed", String(t.getAttribute("aria-pressed") !== "true"));
-    else if (t.dataset.menu) { state.view = "Map"; state.category = t.dataset.menu; state.search = ""; $("menu").close(); render(); }
     else if (t.dataset.here) {
       state.zone = t.dataset.here; $("zone").value = state.zone; $("zone-sheet").close(); render();
     }
-    else if (t.id === "menu-open") $("menu").showModal();
     else if (t.id === "retake") { state.prefs = null; render(); }
     else if ("close" in t.dataset) t.closest("dialog").close();
   });

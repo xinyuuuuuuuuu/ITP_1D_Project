@@ -89,7 +89,7 @@ RIDES = [
 ]
 
 # ---------- Everything else in the directory ----------
-# category decides where the place appears in the directory and the menu.
+# category decides where the place appears in the directory.
 CATEGORY_ICONS = {
     "Rides": "🎢", "Food": "🍴", "Shops": "🛍️",
     "Services": "🛎️", "Amenities": "🚻", "Emergency": "🚑",
@@ -124,15 +124,6 @@ PLACES = [
     {"name": "First Aid Post", "zone": "Jurassic Park", "category": "Emergency", "detail": "Basic first aid"},
     {"name": "Security Office", "zone": "Hollywood", "category": "Emergency", "detail": "Lost child, security"},
 ]
-
-# ---------- Contact (shown at the bottom of the menu) ----------
-# Placeholders for this project, not real USJ contact details.
-CONTACT = {
-    "Emergency hotline": "000-0000-0000",
-    "Information centre": "000-1111-1111",
-    "Email": "help@example.com",
-    "Opening hours": "9:00 - 21:00",
-}
 
 # ---------- Route Ride Recommender (RRR) weights ----------
 # The score of a ride = the things the visitor wants (added)

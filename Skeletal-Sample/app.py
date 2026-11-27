@@ -66,7 +66,6 @@ h3 {
 """, unsafe_allow_html=True)
 
 WAIT_ICONS = {"short": "🟢", "medium": "🟡", "long": "🔴"}
-MENU_CATEGORIES = ["Shops", "Services", "Amenities", "Emergency"]
 
 # The park objects (see park.py).
 park = Park()
@@ -87,37 +86,12 @@ for key in DEFAULTS:
         st.session_state[key] = DEFAULTS[key]
 
 
-def open_category(category):
-    """Menu button was tapped: jump to the Map section, at that category."""
-    st.session_state["view"] = "Map"
-    st.session_state["category"] = category
-
-
 def add_icon(category):
     return data.CATEGORY_ICONS[category] + " " + category
 
 
-@st.dialog("Menu")
-def show_menu():
-    """The hamburger menu: shortcuts into the directory, contact at the bottom."""
-    for category in MENU_CATEGORIES:
-        # on_click changes the section first, then st.rerun() closes the menu.
-        if st.button(add_icon(category), key="menu_" + category, width="stretch",
-                     on_click=open_category, args=[category]):
-            st.rerun()
-    st.divider()
-    st.markdown("**Contact**")
-    for label in data.CONTACT:
-        st.caption(f"{label}: {data.CONTACT[label]}")
-
-
 def show_header():
-    """Title on the left, hamburger menu on the right."""
-    header = st.container(horizontal=True, horizontal_alignment="distribute",
-                          vertical_alignment="center")
-    header.markdown("### 🎢 USJ Guide")
-    if header.button("☰", key="menu_button"):
-        show_menu()
+    st.markdown("### 🎢 USJ Guide")
 
 
 def show_conditions():
