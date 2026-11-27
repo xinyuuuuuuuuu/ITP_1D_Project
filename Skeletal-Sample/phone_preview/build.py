@@ -24,14 +24,13 @@ for name in dir(data):
     if name.isupper():
         page_data[name] = getattr(data, name)
 
-# The map drawing constants, the chatbot keywords and the menu order.
+# The map drawing constants and the chatbot keywords.
 page_data["MAP"] = {}
 for name in dir(map_view):
     if name.isupper():
         page_data["MAP"][name] = getattr(map_view, name)
 page_data["KEYWORDS"] = assistant.KEYWORDS
 page_data["COMMON_WORDS"] = assistant.COMMON_WORDS
-page_data["MENU_CATEGORIES"] = ["Shops", "Services", "Amenities", "Emergency"]
 
 template = open(os.path.join(HERE, "template.html"), encoding="utf-8").read()
 assert template.count("/*__DATA__*/null") == 1

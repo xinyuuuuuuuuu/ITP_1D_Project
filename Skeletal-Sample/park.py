@@ -44,13 +44,10 @@ class Ride(Place):
         self.base_wait = base_wait
         self.duration = duration
 
-    def get_wait(self, hour, has_express):
+    def get_wait(self, hour):
         """Return the queue time in minutes at the given hour."""
         # Busy hours have a bigger multiplier, so the wait gets longer.
-        wait = self.base_wait * data.CROWD_BY_HOUR[hour]
-        if has_express:
-            wait = wait * data.EXPRESS_WAIT_FACTOR
-        return round(wait)
+        return round(self.base_wait * data.CROWD_BY_HOUR[hour])
 
     def is_open(self, weather):
         """Outdoor rides close when it rains."""
@@ -79,7 +76,7 @@ class ParkGraph:
     """A weighted graph: zones are the nodes, walking paths are the edges.
 
     self.paths is a dictionary of dictionaries, for example
-    self.paths["Hollywood"]["New York"] = 4   (minutes)
+    self.paths["Hollywood"]["Jurassic Park"] = 13   (minutes)
     """
 
     def __init__(self):
@@ -198,12 +195,10 @@ class Park:
 class Preferences:
     """The visitor's answers to the route survey."""
 
-    def __init__(self, interests, favourites, avoid_water, has_express,
-                 minutes_available):
+    def __init__(self, interests, favourites, avoid_water, minutes_available):
         self.interests = interests            # list of ride tags
         self.favourites = favourites          # list of ride names
         self.avoid_water = avoid_water        # True = skip rides that get you wet
-        self.has_express = has_express
         self.minutes_available = minutes_available
 
 
@@ -280,7 +275,7 @@ class RouteRecommender:
             if not self.is_candidate(ride, preferences, weather):
                 continue
             walk, path = self.park.graph.shortest_path(from_zone, ride.zone)
-            wait = ride.get_wait(hour, preferences.has_express)
+            wait = ride.get_wait(hour)
             score, reasons = self.score_ride(ride, preferences, walk, wait, weather)
             options.append(RouteStep(ride, path, walk, wait, score, reasons))
 
@@ -332,6 +327,11 @@ if __name__ == "__main__":
     for place in park.places:
         assert place.zone in data.ZONES, place.name
 
+    # 4 zones with 4 rides each.
+    assert len(data.ZONES) == 4
+    for zone in data.ZONES:
+        assert len([ride for ride in park.rides if ride.zone == zone]) == 4, zone
+
     # Graph: every zone can be reached, and A->B takes as long as B->A.
     for zone_a in data.ZONES:
         for zone_b in data.ZONES:
@@ -341,15 +341,14 @@ if __name__ == "__main__":
             assert path[0] == zone_a and path[-1] == zone_b
     assert graph.shortest_path("Hollywood", "Hollywood") == (0, ["Hollywood"])
     # No direct path: the quickest way to Jurassic Park is around the lagoon.
-    assert graph.shortest_path("Hollywood", "Jurassic Park") == (
-        13, ["Hollywood", "New York", "Minion Park", "Jurassic Park"])
+    assert graph.shortest_path("Hollywood", "Super Nintendo World") == (
+        17, ["Hollywood", "Wizarding World of Harry Potter", "Super Nintendo World"])
 
-    # Rides: busier hour = longer wait, express = shorter, rain closes outdoor.
+    # Rides: busier hour = longer wait, rain closes outdoor.
     mario = park.find_ride("Mario Kart: Koopa's Challenge")
     dinosaur = park.find_ride("The Flying Dinosaur")
-    assert mario.get_wait(11, False) == 90
-    assert mario.get_wait(13, False) == 117
-    assert mario.get_wait(11, True) == 27
+    assert mario.get_wait(11) == 90
+    assert mario.get_wait(13) == 117
     assert mario.is_open("Rainy") and not dinosaur.is_open("Rainy")
     assert get_wait_label(20) == "short" and get_wait_label(46) == "long"
 
@@ -357,35 +356,35 @@ if __name__ == "__main__":
     assert len(park.get_places("Rides")) == len(data.RIDES)
     assert len(park.get_places("Emergency")) == 3
     assert park.search("locker")[0].category == "Services"
-    nearest = park.sort_by_walk(park.search("locker"), "Jurassic Park")[0]
-    assert nearest[1].name == "Hogsmeade Lockers" and nearest[0] == 9
+    nearest = park.sort_by_walk(park.search("locker"), "Super Nintendo World")[0]
+    assert nearest[1].name == "Hogsmeade Lockers" and nearest[0] == 6
 
     # Route: fits the time, no ride twice, the must-do ride comes first.
     recommender = RouteRecommender(park, data.SCORE_WEIGHTS)
-    prefs = Preferences(["thrill"], ["JAWS"], False, False, 240)
+    prefs = Preferences(["thrill"], ["Dino Splash Rapids"], False, 240)
     route = recommender.recommend(prefs, "Hollywood", 12, "Sunny")
-    assert route[0].ride.name == "JAWS"
+    assert route[0].ride.name == "Dino Splash Rapids"
     assert get_route_minutes(route) <= 240
     names = []
     for step in route:
         assert step.ride.name not in names
         names.append(step.ride.name)
-    assert "Flying Snoopy" not in names   # not a thrill ride
+    assert "Wand Studio" not in names   # not a thrill ride
 
     # Rain: only indoor rides are suggested, so the route changes.
     rainy = recommender.recommend(prefs, "Hollywood", 12, "Rainy")
     assert len(rainy) > 0
     for step in rainy:
         assert step.ride.indoor
-    assert "JAWS" not in [step.ride.name for step in rainy]
+    assert "Dino Splash Rapids" not in [step.ride.name for step in rainy]
 
     # Avoid water: no water rides, even a must-do one.
-    dry = Preferences(["thrill"], ["JAWS"], True, False, 240)
+    dry = Preferences(["thrill"], ["Dino Splash Rapids"], True, 240)
     for step in recommender.recommend(dry, "Hollywood", 12, "Sunny"):
         assert "water" not in step.ride.tags
 
     # Weights matter: if walking costs a lot, the nearest ride wins.
-    anything = Preferences([], [], False, False, 240)
+    anything = Preferences([], [], False, 240)
     normal_first = recommender.rank_rides(anything, "Jurassic Park", 12, "Sunny", [])[0]
     lazy = RouteRecommender(park, {"favourite": 100, "preference": 30,
                                    "weather": 20, "queue": 1, "walk": 50})
@@ -394,7 +393,7 @@ if __name__ == "__main__":
     assert lazy_first.ride.zone == "Jurassic Park"
 
     # No time means an empty route.
-    no_time = Preferences([], [], False, False, 0)
+    no_time = Preferences([], [], False, 0)
     assert recommender.recommend(no_time, "Hollywood", 12, "Sunny") == []
 
     print("All park checks passed.")

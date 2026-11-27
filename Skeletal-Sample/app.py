@@ -66,7 +66,6 @@ h3 {
 """, unsafe_allow_html=True)
 
 WAIT_ICONS = {"short": "🟢", "medium": "🟡", "long": "🔴"}
-MENU_CATEGORIES = ["Shops", "Services", "Amenities", "Emergency"]
 
 # The park objects (see park.py).
 park = Park()
@@ -87,37 +86,12 @@ for key in DEFAULTS:
         st.session_state[key] = DEFAULTS[key]
 
 
-def open_category(category):
-    """Menu button was tapped: jump to the Map section, at that category."""
-    st.session_state["view"] = "Map"
-    st.session_state["category"] = category
-
-
 def add_icon(category):
     return data.CATEGORY_ICONS[category] + " " + category
 
 
-@st.dialog("Menu")
-def show_menu():
-    """The hamburger menu: shortcuts into the directory, contact at the bottom."""
-    for category in MENU_CATEGORIES:
-        # on_click changes the section first, then st.rerun() closes the menu.
-        if st.button(add_icon(category), key="menu_" + category, width="stretch",
-                     on_click=open_category, args=[category]):
-            st.rerun()
-    st.divider()
-    st.markdown("**Contact**")
-    for label in data.CONTACT:
-        st.caption(f"{label}: {data.CONTACT[label]}")
-
-
 def show_header():
-    """Title on the left, hamburger menu on the right."""
-    header = st.container(horizontal=True, horizontal_alignment="distribute",
-                          vertical_alignment="center")
-    header.markdown("### 🎢 USJ Guide")
-    if header.button("☰", key="menu_button"):
-        show_menu()
+    st.markdown("### 🎢 USJ Guide")
 
 
 def show_conditions():
@@ -137,10 +111,6 @@ def show_map_section():
     zone = st.session_state["zone"]
     hour = st.session_state["hour"]
     weather = st.session_state["weather"]
-    # Use the Express Pass answer from the survey, if it has been answered.
-    preferences = st.session_state["preferences"]
-    has_express = preferences is not None and preferences.has_express
-
     search_text = st.text_input("Search", placeholder="🔍 Search rides, food, shops...",
                                 label_visibility="collapsed")
     category = st.pills("Category", list(data.CATEGORY_ICONS.keys()), key="category",
@@ -175,7 +145,7 @@ def show_map_section():
                 # Rides also show their queue right now.
                 if place.category == "Rides":
                     if place.is_open(weather):
-                        wait = place.get_wait(hour, has_express)
+                        wait = place.get_wait(hour)
                         st.caption(f"{WAIT_ICONS[get_wait_label(wait)]} {wait} min queue at {hour}:00")
                     else:
                         st.caption("⛔ Closed because of the rain")
@@ -194,11 +164,10 @@ def show_survey():
         favourites = st.multiselect("Must-do rides", ride_names)
         minutes_available = st.slider("Time you have (minutes)", 30, 480, 180, step=15)
         avoid_water = st.toggle("I don't want to get wet")
-        has_express = st.toggle("I have an Express Pass")
         submitted = st.form_submit_button("Suggest my route", type="primary", width="stretch")
     if submitted:
         st.session_state["preferences"] = Preferences(
-            interests, favourites, avoid_water, has_express, minutes_available)
+            interests, favourites, avoid_water, minutes_available)
         st.rerun()
 
 
