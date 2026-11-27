@@ -202,8 +202,6 @@ def show_route_section(route):
             st.caption(f"🚶 {walk_text}")
             st.caption(f"{WAIT_ICONS[get_wait_label(step.wait)]} queue {step.wait} min · "
                        f"🎢 ride {step.ride.duration} min")
-            if len(step.reasons) > 0:
-                st.caption("Why: " + ", ".join(step.reasons))
         number += 1
 
     # Explain every must-do ride that is not in the route.

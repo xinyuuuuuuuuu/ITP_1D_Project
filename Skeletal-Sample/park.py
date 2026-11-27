@@ -205,13 +205,12 @@ class Preferences:
 class RouteStep:
     """One stop in the route: walk there, queue, then ride."""
 
-    def __init__(self, ride, path, walk, wait, score, reasons):
+    def __init__(self, ride, path, walk, wait, score):
         self.ride = ride
         self.path = path          # zones walked through, start to finish
         self.walk = walk
         self.wait = wait
         self.score = score
-        self.reasons = reasons    # short texts explaining the score
 
     def total_minutes(self):
         return self.walk + self.wait + self.ride.duration
@@ -243,28 +242,18 @@ class RouteRecommender:
         return ride.count_matches(preferences.interests) > 0
 
     def score_ride(self, ride, preferences, walk, wait, weather):
-        """Return (score, reasons). A higher score is a better next ride."""
+        """Return the score. A higher score is a better next ride."""
         weights = self.weights
         score = 0
-        reasons = []
         if ride.name in preferences.favourites:
             score += weights["favourite"]
-            reasons.append("on your must-do list")
-        matches = ride.count_matches(preferences.interests)
-        if matches > 0:
-            score += weights["preference"] * matches
-            reasons.append("matches your interests")
+        score += weights["preference"] * ride.count_matches(preferences.interests)
         if ride.suits_weather(weather):
             score += weights["weather"]
-            reasons.append("good in " + weather.lower() + " weather")
         # Time spent queueing and walking makes the score lower.
         score -= weights["queue"] * wait
         score -= weights["walk"] * walk
-        if get_wait_label(wait) == "short":
-            reasons.append("short queue")
-        if walk == 0:
-            reasons.append("right where you are")
-        return score, reasons
+        return score
 
     def rank_rides(self, preferences, from_zone, hour, weather, done_names):
         """Return a RouteStep for every candidate ride, best score first."""
@@ -276,8 +265,8 @@ class RouteRecommender:
                 continue
             walk, path = self.park.graph.shortest_path(from_zone, ride.zone)
             wait = ride.get_wait(hour)
-            score, reasons = self.score_ride(ride, preferences, walk, wait, weather)
-            options.append(RouteStep(ride, path, walk, wait, score, reasons))
+            score = self.score_ride(ride, preferences, walk, wait, weather)
+            options.append(RouteStep(ride, path, walk, wait, score))
 
         def score_of(step):
             return step.score

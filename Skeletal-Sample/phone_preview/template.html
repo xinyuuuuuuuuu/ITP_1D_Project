@@ -350,17 +350,14 @@ function isCandidate(ride, prefs, weather) {
   return countMatches(ride, prefs.interests) > 0;
 }
 function scoreRide(ride, prefs, walk, wait, weather) {
-  const w = D.SCORE_WEIGHTS, reasons = [];
+  const w = D.SCORE_WEIGHTS;
   let score = 0;
-  if (prefs.favourites.includes(ride.name)) { score += w.favourite; reasons.push("on your must-do list"); }
-  const matches = countMatches(ride, prefs.interests);
-  if (matches > 0) { score += w.preference * matches; reasons.push("matches your interests"); }
-  if (suitsWeather(ride, weather)) { score += w.weather; reasons.push("good in " + weather.toLowerCase() + " weather"); }
+  if (prefs.favourites.includes(ride.name)) score += w.favourite;
+  score += w.preference * countMatches(ride, prefs.interests);
+  if (suitsWeather(ride, weather)) score += w.weather;
   score -= w.queue * wait;
   score -= w.walk * walk;
-  if (waitLabel(wait) === "short") reasons.push("short queue");
-  if (walk === 0) reasons.push("right where you are");
-  return { score, reasons };
+  return score;
 }
 function rankRides(prefs, fromZone, hour, weather, doneNames) {
   const options = [];
@@ -369,8 +366,8 @@ function rankRides(prefs, fromZone, hour, weather, doneNames) {
     if (!isCandidate(ride, prefs, weather)) continue;
     const sp = shortestPath(fromZone, ride.zone);
     const wait = getWait(ride, hour);
-    const s = scoreRide(ride, prefs, sp.minutes, wait, weather);
-    options.push({ ride, path: sp.path, walk: sp.minutes, wait, score: s.score, reasons: s.reasons,
+    const score = scoreRide(ride, prefs, sp.minutes, wait, weather);
+    options.push({ ride, path: sp.path, walk: sp.minutes, wait, score,
                    total: sp.minutes + wait + ride.duration });
   }
   return options.sort((a, b) => b.score - a.score);
@@ -592,8 +589,7 @@ function renderRoute(mode) {
     const walk = s.walk === 0 ? "you are already here" : `walk ${s.walk} min: ${s.path.map(esc).join(" → ")}`;
     html += `<div class="item"><span class="step-no">${i + 1}</span><b>${esc(s.ride.name)}</b>` +
             `<p class="num">🚶 ${walk}</p>` +
-            `<p class="num"><span class="dot ${DOT[waitLabel(s.wait)]}"></span>queue ${s.wait} min · ride ${s.ride.duration} min</p>` +
-            (s.reasons.length ? `<p>Why: ${s.reasons.join(", ")}</p>` : "") + `</div>`;
+            `<p class="num"><span class="dot ${DOT[waitLabel(s.wait)]}"></span>queue ${s.wait} min · ride ${s.ride.duration} min</p></div>`;
   });
   const planned = route.map(s => s.ride.name);
   for (const name of prefs.favourites) {
