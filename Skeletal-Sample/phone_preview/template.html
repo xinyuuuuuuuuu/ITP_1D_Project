@@ -137,70 +137,33 @@ body {
 .bar::after {
   content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
   background: linear-gradient(90deg, var(--gold), rgba(232, 198, 106, 0.15) 60%, transparent);
-  transform-origin: left;
 }
-.motion .bar::after { animation: line-in 0.9s cubic-bezier(.2,.8,.2,1) backwards; }
-.motion h1 { animation: title-in 0.9s cubic-bezier(.2,.8,.2,1) backwards; }
-.icon-btn { transition: transform 0.15s, border-color 0.2s, background 0.2s; }
-.icon-btn:active { transform: scale(0.92); border-color: var(--gold); }
 
 .switch { position: relative; padding: 3px; background: var(--panel); }
 .switch::before {
   content: ""; position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc(50% - 3px);
   border-radius: 8px; background: var(--gold); box-shadow: 0 0 18px rgba(232, 198, 106, 0.45);
-  transition: transform 0.45s cubic-bezier(.3,1.35,.5,1);
 }
 .switch[data-view="Route"]::before { transform: translateX(100%); }
-.switch button { position: relative; z-index: 1; background: transparent; transition: color 0.3s; }
+.switch button { position: relative; z-index: 1; background: transparent; }
 .switch button[aria-pressed="true"] { background: transparent; color: var(--gold-ink); }
 
-.chip { transition: transform 0.15s, border-color 0.25s, box-shadow 0.25s, color 0.25s, background 0.25s; }
-.chip:active { transform: scale(0.94); }
 .chip[aria-pressed="true"] { box-shadow: 0 0 14px rgba(232, 198, 106, 0.28), inset 0 0 0 1px var(--gold); }
 
 .map {
   position: relative;
   box-shadow: 0 0 0 1px rgba(232, 198, 106, 0.4), 0 16px 50px rgba(111, 227, 225, 0.16);
 }
-.motion .map.arrive { animation: map-in 1s cubic-bezier(.2,.8,.2,1) backwards; }
 .pm-hit { cursor: pointer; }
-.pm-still .pm-pop, .pm-still .pm-route { animation: none !important; }
-.pm-still .pm-flow { animation: pm-flow 1.3s linear infinite !important; }
 
-.item { transition: border-color 0.25s, transform 0.2s, background 0.25s; }
-.item:active { transform: scale(0.985); border-color: var(--gold); }
-.motion .rise { animation: rise 0.6s cubic-bezier(.2,.8,.2,1) backwards; }
-.primary { box-shadow: 0 0 22px rgba(232, 198, 106, 0.35); transition: transform 0.15s, box-shadow 0.25s; }
-.primary:active, .ghost:active { transform: scale(0.97); }
+.primary { box-shadow: 0 0 22px rgba(232, 198, 106, 0.35); }
 
-/* A band of light crosses the screen when the section changes. */
-.sweep { position: fixed; inset: 0 auto 0 0; width: 45%; z-index: 20; pointer-events: none; opacity: 0;
-  background: linear-gradient(100deg, transparent, rgba(111, 227, 225, 0.10) 35%, rgba(232, 198, 106, 0.38) 50%, rgba(111, 227, 225, 0.10) 65%, transparent); }
-.sweep.run { animation: sweep 0.75s cubic-bezier(.4,0,.2,1); }
-
-/* "Charting your route": shown while the route is being prepared. */
-.charting { position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; align-content: center; gap: 18px;
-  background: radial-gradient(circle at 50% 45%, rgba(21, 48, 58, 0.96), rgba(4, 8, 10, 0.98));
-  animation: fade 0.3s ease backwards; }
-.charting.out { animation: fade-out 0.35s ease forwards; }
-.charting svg { width: 150px; height: 150px; }
-.charting .ring-a { transform-origin: 75px 75px; animation: spin 2.4s linear infinite; }
-.charting .ring-b { transform-origin: 75px 75px; animation: spin 3.6s linear infinite reverse; }
-.charting .needle { transform-origin: 75px 75px; animation: needle 1.2s cubic-bezier(.4,0,.2,1) infinite alternate; }
-.charting p { margin: 0; font-family: var(--display); font-weight: 600; font-size: 18px; letter-spacing: 0.3em;
-  text-transform: uppercase; color: var(--gold); animation: title-in 0.7s ease backwards; }
-
-/* Sheets and the assistant slide up from the bottom edge, like sheets. */
+/* Sheets and the assistant sit at the bottom edge. */
 dialog { margin: auto auto 0; width: 100%; max-width: 480px; max-height: 84%;
   border-radius: 18px 18px 0 0; border-bottom: 0;
   padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -18px 60px rgba(111, 227, 225, 0.14); }
-dialog[open] { animation: sheet-in 0.42s cubic-bezier(.2,.9,.2,1); }
-dialog::backdrop { background: rgba(3, 7, 9, 0.66); backdrop-filter: blur(5px); animation: fade 0.3s ease; }
-dialog[open] .msg, dialog[open] .zone-group { animation: rise 0.5s cubic-bezier(.2,.8,.2,1) backwards; }
-dialog[open] .zone-group:nth-of-type(2) { animation-delay: 0.06s; }
-dialog[open] .zone-group:nth-of-type(3) { animation-delay: 0.12s; }
-dialog[open] .zone-group:nth-of-type(n+4) { animation-delay: 0.18s; }
+dialog::backdrop { background: rgba(3, 7, 9, 0.66); backdrop-filter: blur(5px); }
 
 .zone-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
 .zone-head svg { width: 62px; height: 62px; flex: none; border-radius: 50%; background: var(--panel-2);
@@ -209,20 +172,6 @@ dialog[open] .zone-group:nth-of-type(n+4) { animation-delay: 0.18s; }
 .zone-head p { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
 .zone-group { margin-bottom: 12px; }
 .zone-group .item { margin-top: 6px; }
-
-@keyframes rise { from { opacity: 0; transform: translateY(20px); filter: blur(6px); } }
-@keyframes title-in { from { opacity: 0; letter-spacing: 0.5em; filter: blur(8px); } }
-@keyframes line-in { from { transform: scaleX(0); } }
-@keyframes map-in { from { opacity: 0; transform: scale(1.08); filter: blur(10px) brightness(1.6); } }
-@keyframes sweep { 0% { transform: translateX(-110%); opacity: 1; } 100% { transform: translateX(330%); opacity: 1; } }
-@keyframes sheet-in { from { transform: translateY(100%); } }
-@keyframes fade { from { opacity: 0; } }
-@keyframes fade-out { to { opacity: 0; } }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes needle { from { transform: rotate(-50deg); } to { transform: rotate(70deg); } }
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-}
 </style>
 
 <div class="app">
@@ -254,19 +203,6 @@ dialog[open] .zone-group:nth-of-type(n+4) { animation-delay: 0.18s; }
     <input type="text" id="chat-input" placeholder="Ask the park assistant" aria-label="Ask the park assistant">
     <button type="submit" aria-label="Send">↑</button>
   </form>
-</div>
-
-<div class="sweep" id="sweep"></div>
-
-<div class="charting" id="charting" hidden>
-  <svg viewBox="0 0 150 150" aria-hidden="true">
-    <circle class="ring-a" cx="75" cy="75" r="64" fill="none" stroke="#e8c66a" stroke-width="1.5" stroke-dasharray="6 10"/>
-    <circle class="ring-b" cx="75" cy="75" r="50" fill="none" stroke="#6fe3e1" stroke-width="2" stroke-dasharray="60 26"/>
-    <circle cx="75" cy="75" r="36" fill="none" stroke="#e8c66a" stroke-opacity="0.5"/>
-    <path class="needle" d="M75 43L82 75L75 107L68 75Z" fill="#e8c66a"/>
-    <circle cx="75" cy="75" r="4" fill="#070d10" stroke="#e8c66a"/>
-  </svg>
-  <p>Charting your route</p>
 </div>
 
 <dialog id="zone-sheet">
@@ -448,51 +384,35 @@ function mapXY(zone) {
 }
 // The landmarks, footpaths and scenery come ready-drawn from map_view.py
 // (M.BASE_ART). Only the parts that change are drawn here.
-// mode: "full" = reveal + pop-ins, "pins" = pop-ins only, "still" = no entrance motion.
-function buildMapSvg(here, matchIcons, route, mode = "full") {
+function buildMapSvg(here, matchIcons, route) {
   const GOLD = M.COLOUR_GOLD, CYAN = M.COLOUR_HERE;
-  const [hx, hy] = mapXY(here);
-  let base = M.BASE_ART.replace("REVEAL_X", hx).replace("REVEAL_Y", hy);
-  if (mode !== "full") base = base.replace(/<animate [^>]*\/>/, "");
-  if (mode === "still") base = base.replace('class="pm-map"', 'class="pm-map pm-still"');
-  const o = [base], stops = {};
-  let segment = 0;
+  const o = [M.BASE_ART], stops = {};
   route.forEach((s, i) => {
     (stops[s.ride.zone] = stops[s.ride.zone] || []).push(String(i + 1));
     for (let k = 0; k < s.path.length - 1; k++) {
       const road = M.ROADS[s.path[k] + "|" + s.path[k + 1]];
-      const delay = 0.9 + segment * 0.45;
-      o.push(`<path class="pm-route" style="animation-delay:${delay.toFixed(2)}s" d="${road}" pathLength="1" fill="none" stroke="${GOLD}" stroke-width="4" stroke-linecap="round" stroke-dasharray="1" filter="url(#pm-glow)"/>`,
-             `<path class="pm-flow" style="animation-delay:${(delay + 0.5).toFixed(2)}s, 0s" d="${road}" pathLength="1" fill="none" stroke="#fff8e0" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="0.05 0.15"/>`);
-      segment++;
+      o.push(`<path class="pm-route" d="${road}" fill="none" stroke="${GOLD}" stroke-width="4" stroke-linecap="round" filter="url(#pm-glow)"/>`);
     }
   });
-  let order = 0;
   for (const zone in D.ZONES) {
     const [x, y] = mapXY(zone);
     if (zone === here) {
       o.push(`<ellipse cx="${x}" cy="${y + 6}" rx="25" ry="9.5" fill="none" stroke="${CYAN}" stroke-width="2" filter="url(#pm-glow)"/>`);
-      for (const d of [0, 1.1])
-        o.push(`<ellipse class="pm-pulse" style="animation-delay:${d}s" cx="${x}" cy="${y + 6}" rx="25" ry="9.5" fill="none" stroke="${CYAN}" stroke-width="1.5"/>`);
-      o.push(`<path class="pm-bob" d="M${x - 6} ${y - 46}H${x + 6}L${x} ${y - 37}Z" fill="${CYAN}" filter="url(#pm-glow)"/>`);
+      o.push(`<path d="M${x - 6} ${y - 46}H${x + 6}L${x} ${y - 37}Z" fill="${CYAN}" filter="url(#pm-glow)"/>`);
     }
     if (stops[zone]) {
-      const delay = (1.0 + order * 0.3).toFixed(2);
-      o.push(`<g transform="translate(${x + 20} ${y - 24})"><g class="pm-pop" style="animation-delay:${delay}s"><rect x="-9" y="-9" width="18" height="18" rx="3" transform="rotate(45)" fill="${GOLD}" filter="url(#pm-glow)"/><text y="4" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1608">${stops[zone].join("·")}</text></g></g>`);
-      order++;
+      o.push(`<g transform="translate(${x + 20} ${y - 24})"><rect x="-9" y="-9" width="18" height="18" rx="3" transform="rotate(45)" fill="${GOLD}" filter="url(#pm-glow)"/><text y="4" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1608">${stops[zone].join("·")}</text></g>`);
     } else if (matchIcons[zone]) {
       const [icon, count] = matchIcons[zone];
-      const delay = (0.6 + order * 0.08).toFixed(2);
       let badge = `<circle r="10" fill="#0e181c" stroke="${GOLD}" stroke-width="1.6"/><text y="3.6" text-anchor="middle" font-size="10">${icon}</text>`;
       if (count > 1) badge += `<circle cx="9" cy="-8" r="6" fill="${GOLD}"/><text x="9" y="-4.8" text-anchor="middle" font-size="9" font-weight="700" fill="#1a1608">${count}</text>`;
       o.push(`<ellipse cx="${x}" cy="${y + 6}" rx="23" ry="8.5" fill="none" stroke="${GOLD}" stroke-width="1.6" filter="url(#pm-glow)"/>`,
-             `<g transform="translate(${x + 20} ${y - 24})"><g class="pm-pop" style="animation-delay:${delay}s">${badge}</g></g>`);
-      order++;
+             `<g transform="translate(${x + 20} ${y - 24})">${badge}</g>`);
     }
     // An invisible circle makes the whole landmark easy to tap.
     o.push(`<circle class="pm-hit" data-zone="${esc(zone)}" cx="${x}" cy="${y - 6}" r="30" fill="transparent"/>`);
   }
-  o.push("</g></svg>");
+  o.push("</svg>");
   return o.join("");
 }
 
@@ -519,7 +439,7 @@ function renderChrome() {
     `<button type="button" class="chip" data-weather="${w}" aria-pressed="${w === state.weather}">${w}</button>`).join("");
 }
 
-function mapResults(mode = "pins") {
+function mapResults() {
   const matches = state.search.trim() !== "" ? searchPlaces(state.search)
                 : state.category === null ? places : getPlaces(state.category);
   const nearest = sortByWalk(matches, state.zone);
@@ -541,26 +461,26 @@ function mapResults(mode = "pins") {
     list += `<div class="item">${D.CATEGORY_ICONS[p.category]} <b>${esc(p.name)}</b>` +
             `<p class="num">${esc(p.zone)} · ${m.minutes} min walk · ${esc(p.detail)}</p>${queue}</div>`;
   }
-  $("map-box").innerHTML = buildMapSvg(state.zone, icons, [], mode);
+  $("map-box").innerHTML = buildMapSvg(state.zone, icons, []);
   $("results").innerHTML = list;
 }
 
-function renderMap(mode) {
+function renderMap() {
   $("section").innerHTML =
-    `<div class="list stagger" style="gap:12px">
+    `<div class="list" style="gap:12px">
        <input type="search" id="search" placeholder="Search rides, food, shops..." aria-label="Search the park" value="${esc(state.search)}">
        <div class="chips" id="cats">${Object.keys(D.CATEGORY_ICONS).map(c =>
          `<button type="button" class="chip" data-cat="${c}" aria-pressed="${c === state.category}">${D.CATEGORY_ICONS[c]} ${c}</button>`).join("")}</div>
        <div class="map" id="map-box"></div>
        <p class="note">Tap a place on the map to see what is there. Cyan rings: you. Gold badge: found here.</p>
-       <div class="list stagger" id="results"></div>
+       <div class="list" id="results"></div>
      </div>`;
-  mapResults(mode);
+  mapResults();
 }
 
 function renderSurvey() {
   $("section").innerHTML =
-    `<form class="survey stagger" id="survey">
+    `<form class="survey" id="survey">
        <h2>Tell us about your visit</h2>
        <div><span class="label">What do you enjoy?</span><div class="chips" id="interests">${D.RIDE_TAGS.map(t =>
          `<button type="button" class="chip" data-tag="${t}" aria-pressed="false">${t}</button>`).join("")}</div></div>
@@ -573,7 +493,7 @@ function renderSurvey() {
      </form>`;
 }
 
-function renderRoute(mode) {
+function renderRoute() {
   const prefs = state.prefs;
   if (prefs === null) { renderSurvey(); return; }
   const route = currentRoute();
@@ -582,7 +502,7 @@ function renderRoute(mode) {
     html += `<div class="banner warn">No ride fits. Try more time, other interests or another hour.</div>`;
   } else {
     html += `<div class="banner ok num">${route.length} ride(s) in ${routeMinutes(route)} of your ${prefs.minutes} minutes</div>` +
-            `<div class="map">${buildMapSvg(state.zone, {}, route, mode)}</div>` +
+            `<div class="map">${buildMapSvg(state.zone, {}, route)}</div>` +
             `<p class="note">Cyan rings: start. Gold: your route, in order. Based on ${state.hour}:00, ${state.weather.toLowerCase()} weather.</p>`;
   }
   route.forEach((s, i) => {
@@ -601,41 +521,12 @@ function renderRoute(mode) {
     html += `<div class="banner warn">${esc(why)}</div>`;
   }
   html += `<button class="ghost" type="button" id="retake">Retake survey</button>`;
-  $("section").innerHTML = `<div class="list stagger" style="gap:10px">${html}</div>`;
+  $("section").innerHTML = `<div class="list" style="gap:10px">${html}</div>`;
 }
 
-const REDUCED = typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
-let lastView = null;
-
-// Everything inside a ".stagger" box rises into place, one after another.
-function enter(root) {
-  let i = 0;
-  for (const el of root.querySelectorAll(".stagger > *")) {
-    el.style.animationDelay = Math.min(i, 12) * 55 + "ms";
-    el.classList.add("rise");
-    i++;
-  }
-}
-function runSweep() {
-  const sweep = $("sweep");
-  sweep.classList.remove("run");
-  void sweep.offsetWidth;          // restart the animation
-  sweep.classList.add("run");
-}
-// animate = false keeps everything still (used while dragging the time slider).
-function render(animate = true) {
-  const mode = animate ? "full" : "still";
+function render() {
   renderChrome();
-  if (state.view === "Route") renderRoute(mode); else renderMap(mode);
-  if (animate) {
-    enter($("section"));
-    const map = document.querySelector(".map");
-    if (map) map.classList.add("arrive");
-    const svg = document.querySelector(".map svg");
-    if (svg && svg.setCurrentTime) svg.setCurrentTime(0);   // replay the map reveal
-    if (lastView !== null && lastView !== state.view) runSweep();
-  }
-  lastView = state.view;
+  if (state.view === "Route") renderRoute(); else renderMap();
 }
 
 // The sheet that opens when a place on the map is tapped.
@@ -693,7 +584,7 @@ function start() {
   document.addEventListener("input", e => {
     const t = e.target;
     if (t.id === "search") { state.search = t.value; mapResults(); }   // keep the keyboard open
-    else if (t.id === "hour") { state.hour = HOURS[Number(t.value)]; render(false); }
+    else if (t.id === "hour") { state.hour = HOURS[Number(t.value)]; render(); }
     else if (t.id === "zone") { state.zone = t.value; render(); }
     else if (t.id === "minutes") $("minutes-out").textContent = t.value + " min";
   });
@@ -706,13 +597,7 @@ function start() {
         avoidWater: $("avoid-water").checked,
         minutes: Number($("minutes").value),
       };
-      // Show "Charting your route" for a moment, then reveal the route.
-      if (REDUCED) { render(); return; }
-      const charting = $("charting");
-      charting.classList.remove("out");
-      charting.hidden = false;
-      setTimeout(() => { render(); charting.classList.add("out"); }, 1150);
-      setTimeout(() => { charting.hidden = true; }, 1500);
+      render();
     } else if (e.target.id === "chat-form") {
       const question = $("chat-input").value.trim();
       if (question === "") return;
@@ -725,9 +610,6 @@ function start() {
     }
   });
   render();
-  // Entrance motion is only switched on once the page is really on screen,
-  // so a page that cannot animate still shows everything.
-  requestAnimationFrame(() => document.documentElement.classList.add("motion"));
 }
 if (typeof document !== "undefined") start();
 </script>

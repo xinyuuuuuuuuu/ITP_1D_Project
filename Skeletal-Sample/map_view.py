@@ -45,7 +45,7 @@ LANDMARKS = {
     "Jurassic Park": {"tint": "#5fae7a", "art":  # a volcano and a palm tree
         '<path d="M-20 6L-6 -18L-2 -14L2 -18L16 6Z" fill="{T}" fill-opacity="0.6" stroke="#eef3ee" stroke-width="1.2" stroke-linejoin="round"/>'
         '<path d="M-6 -18L-2 -14L2 -18L4 -13L-1 -9L-7 -13Z" fill="#ef7a6d" fill-opacity="0.85"/>'
-        '<circle class="pm-smoke" cx="-2" cy="-23" r="3" fill="#eef3ee" fill-opacity="0.5"/>'
+        '<circle cx="-2" cy="-23" r="3" fill="#eef3ee" fill-opacity="0.5"/>'
         '<path d="M15 6Q14 -4 17 -10" fill="none" stroke="#eef3ee" stroke-width="1.4"/>'
         '<path d="M17 -10Q11 -14 8 -9M17 -10Q22 -15 25 -9M17 -10Q16 -17 11 -17M17 -10Q20 -17 24 -15" fill="none" stroke="#7fd08f" stroke-width="1.4" stroke-linecap="round"/>'},
     "Wizarding World of Harry Potter": {"tint": "#8f7fc9", "art":   # a castle
@@ -63,35 +63,6 @@ LANDMARKS = {
         '<circle cx="10" cy="-9" r="2.4" fill="#eef3ee"/>'
         '<path d="M-3 0V3M3 0V3" stroke="#12262b" stroke-width="1.4" stroke-linecap="round"/>'},
 }
-
-# ---------- The animations (CSS inside the picture) ----------
-# Every animation only describes where an element comes FROM, so if a phone
-# has "reduce motion" switched on, everything is simply shown in place.
-MAP_STYLE = """<style>
-.pm-pop, .pm-pulse, .pm-spin, .pm-smoke { transform-box: fill-box; transform-origin: center; }
-.pm-pop { animation: pm-pop 0.5s cubic-bezier(.2,1.5,.4,1) backwards; }
-.pm-pulse { animation: pm-pulse 2.2s ease-out infinite; }
-.pm-bob { animation: pm-bob 1.4s ease-in-out infinite alternate; }
-.pm-spin { animation: pm-spin 24s linear infinite; }
-.pm-blink { animation: pm-blink 2.4s ease-in-out infinite alternate; }
-.pm-smoke { animation: pm-smoke 3s ease-out infinite; }
-.pm-wave { animation: pm-drift 7s ease-in-out infinite alternate; }
-.pm-cloud { animation: pm-drift 38s ease-in-out infinite alternate; }
-.pm-route { animation: pm-draw 0.55s ease-out backwards; }
-.pm-flow { animation: pm-fade 0.4s ease backwards, pm-flow 1.3s linear infinite; }
-@keyframes pm-pop { from { transform: scale(0); opacity: 0; } }
-@keyframes pm-pulse { from { transform: scale(0.55); opacity: 0.9; } to { transform: scale(1.9); opacity: 0; } }
-@keyframes pm-bob { to { transform: translateY(-5px); } }
-@keyframes pm-spin { to { transform: rotate(360deg); } }
-@keyframes pm-blink { from { opacity: 0.35; } }
-@keyframes pm-smoke { from { transform: translateY(4px) scale(0.5); opacity: 0.8; } to { transform: translateY(-9px) scale(1.5); opacity: 0; } }
-@keyframes pm-drift { to { transform: translateX(14px); } }
-@keyframes pm-draw { from { stroke-dashoffset: 1; } }
-@keyframes pm-fade { from { opacity: 0; } }
-@keyframes pm-flow { to { stroke-dashoffset: -0.2; } }
-@media (prefers-reduced-motion: reduce) { .pm-map * { animation: none !important; } }
-</style>"""
-
 
 def get_map_xy(zone):
     """Turn a zone's map position in data.py into pixels on the drawing."""
@@ -165,7 +136,6 @@ def build_base_art():
         f'<svg xmlns="http://www.w3.org/2000/svg" class="pm-map" width="{MAP_WIDTH}" '
         f'height="{MAP_HEIGHT}" viewBox="0 0 {MAP_WIDTH} {MAP_HEIGHT}" '
         f'font-family="Rajdhani, Segoe UI, Helvetica, Arial, sans-serif">',
-        MAP_STYLE,
         '<defs>',
         '<radialGradient id="pm-sea" cx="50%" cy="50%" r="75%">'
         '<stop offset="0" stop-color="#1b4350"/><stop offset="1" stop-color="#07121a"/></radialGradient>',
@@ -178,13 +148,8 @@ def build_base_art():
         '<feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>',
         '<filter id="pm-soft" x="-30%" y="-30%" width="160%" height="160%">'
         '<feGaussianBlur stdDeviation="9"/></filter>',
-        # The map opens outwards from where the visitor is standing.
-        '<clipPath id="pm-reveal"><circle cx="REVEAL_X" cy="REVEAL_Y" r="700">'
-        '<animate attributeName="r" from="0" to="700" dur="1.1s" calcMode="spline" '
-        'keyTimes="0;1" keySplines="0.3 0 0.2 1" fill="freeze"/></circle></clipPath>',
         '</defs>',
         f'<rect width="{MAP_WIDTH}" height="{MAP_HEIGHT}" rx="14" fill="url(#pm-sea)"/>',
-        '<g clip-path="url(#pm-reveal)">',
     ]
 
     # Little waves on the sea, outside the island.
@@ -193,7 +158,7 @@ def build_base_art():
         x = rng.randint(16, MAP_WIDTH - 40)
         y = rng.randint(20, MAP_HEIGHT - 16)
         if not is_on_land(x, y, 1.1):
-            svg.append(f'<path class="pm-wave" style="animation-delay:-{waves}s" d="M{x} {y}q4 -3 8 0t8 0" '
+            svg.append(f'<path d="M{x} {y}q4 -3 8 0t8 0" '
                        f'fill="none" stroke="{COLOUR_HERE}" stroke-opacity="0.3" stroke-linecap="round"/>')
             waves += 1
 
@@ -210,13 +175,10 @@ def build_base_art():
         svg.append(f'<ellipse cx="{x}" cy="{y}" rx="46" ry="40" fill="{tint}" fill-opacity="0.28" '
                    f'filter="url(#pm-soft)"/>')
 
-    # The lagoon, with ripples that spread out.
+    # The lagoon.
     lagoon = LAGOON
     svg.append(f'<ellipse cx="{lagoon["x"]}" cy="{lagoon["y"]}" rx="{lagoon["rx"]}" ry="{lagoon["ry"]}" '
                f'fill="url(#pm-water)" stroke="#d9cfa6" stroke-opacity="0.45" stroke-width="1.5"/>')
-    for delay in [0, 1.1]:
-        svg.append(f'<ellipse class="pm-pulse" style="animation-delay:{delay}s" cx="{lagoon["x"]}" '
-                   f'cy="{lagoon["y"]}" rx="20" ry="9" fill="none" stroke="{COLOUR_HERE}" stroke-opacity="0.5"/>')
     svg.append(f'<text x="{lagoon["x"]}" y="{lagoon["y"] + 3}" text-anchor="middle" font-size="8" '
                f'letter-spacing="3" fill="{COLOUR_HERE}" fill-opacity="0.7" font-style="italic">LAGOON</text>')
 
@@ -257,10 +219,10 @@ def build_base_art():
     svg.append(f'<text x="{x}" y="{y + 42}" text-anchor="middle" font-size="7.5" letter-spacing="2" '
                f'fill="{gold}">▲ ENTRANCE</text>')
 
-    # Drifting clouds, the frame corners, the title and the compass.
-    svg.append('<ellipse class="pm-cloud" cx="300" cy="120" rx="70" ry="22" fill="#ffffff" '
+    # Clouds, the frame corners, the title and the compass.
+    svg.append('<ellipse cx="300" cy="120" rx="70" ry="22" fill="#ffffff" '
                'fill-opacity="0.07" filter="url(#pm-soft)"/>')
-    svg.append('<ellipse class="pm-cloud" style="animation-delay:-19s" cx="90" cy="400" rx="80" ry="24" '
+    svg.append('<ellipse cx="90" cy="400" rx="80" ry="24" '
                'fill="#ffffff" fill-opacity="0.06" filter="url(#pm-soft)"/>')
     svg.append(f'<path d="M12 30V12H30 M{MAP_WIDTH - 30} 12H{MAP_WIDTH - 12}V30 '
                f'M12 {MAP_HEIGHT - 30}V{MAP_HEIGHT - 12}H30 '
@@ -285,9 +247,8 @@ def build_overlay(here, match_icons, route):
     cyan = COLOUR_HERE
     svg = []
 
-    # --- The route: each walked path lights up in gold, one after another ---
+    # --- The route: each walked path in gold ---
     stop_numbers = {}       # zone -> list of step numbers, e.g. {"Hollywood": ["1", "3"]}
-    segment = 0
     number = 1
     for step in route:
         if step.ride.zone not in stop_numbers:
@@ -296,45 +257,30 @@ def build_overlay(here, match_icons, route):
         number += 1
         for i in range(len(step.path) - 1):
             road = ROADS[step.path[i] + "|" + step.path[i + 1]]
-            delay = round(0.9 + segment * 0.45, 2)
-            # pathLength="1" lets the animation "draw" the line from 0 to 1.
-            svg.append(f'<path class="pm-route" style="animation-delay:{delay}s" d="{road}" pathLength="1" '
+            svg.append(f'<path class="pm-route" d="{road}" '
                        f'fill="none" stroke="{gold}" stroke-width="4" stroke-linecap="round" '
-                       f'stroke-dasharray="1" filter="url(#pm-glow)"/>')
-            # Small bright dashes that keep flowing in the walking direction.
-            svg.append(f'<path class="pm-flow" style="animation-delay:{round(delay + 0.5, 2)}s, 0s" d="{road}" '
-                       f'pathLength="1" fill="none" stroke="#fff8e0" stroke-width="1.6" '
-                       f'stroke-linecap="round" stroke-dasharray="0.05 0.15"/>')
-            segment += 1
+                       f'filter="url(#pm-glow)"/>')
 
-    order = 0
     for zone in data.ZONES:
         x, y = get_map_xy(zone)
 
         if zone == here:
-            # The visitor: cyan rings on the ground and a pointer that bobs.
+            # The visitor: a cyan ring on the ground and a pointer.
             svg.append(f'<ellipse cx="{x}" cy="{y + 6}" rx="25" ry="9.5" fill="none" stroke="{cyan}" '
                        f'stroke-width="2" filter="url(#pm-glow)"/>')
-            for delay in [0, 1.1]:
-                svg.append(f'<ellipse class="pm-pulse" style="animation-delay:{delay}s" cx="{x}" cy="{y + 6}" '
-                           f'rx="25" ry="9.5" fill="none" stroke="{cyan}" stroke-width="1.5"/>')
-            svg.append(f'<path class="pm-bob" d="M{x - 6} {y - 46}H{x + 6}L{x} {y - 37}Z" fill="{cyan}" '
+            svg.append(f'<path d="M{x - 6} {y - 46}H{x + 6}L{x} {y - 37}Z" fill="{cyan}" '
                        f'filter="url(#pm-glow)"/>')
 
         if zone in stop_numbers:
             # A stop on the route: gold diamond with the step number(s).
-            delay = round(1.0 + order * 0.3, 2)
             numbers = "·".join(stop_numbers[zone])
-            svg.append(f'<g transform="translate({x + 20} {y - 24})"><g class="pm-pop" '
-                       f'style="animation-delay:{delay}s"><rect x="-9" y="-9" width="18" height="18" rx="3" '
+            svg.append(f'<g transform="translate({x + 20} {y - 24})"><rect x="-9" y="-9" width="18" height="18" rx="3" '
                        f'transform="rotate(45)" fill="{gold}" filter="url(#pm-glow)"/>'
                        f'<text y="4" text-anchor="middle" font-size="12" font-weight="700" '
-                       f'fill="#1a1608">{numbers}</text></g></g>')
-            order += 1
+                       f'fill="#1a1608">{numbers}</text></g>')
         elif zone in match_icons:
             # A search result is here: gold ring on the ground and a badge.
             icon, count = match_icons[zone]
-            delay = round(0.6 + order * 0.08, 2)
             svg.append(f'<ellipse cx="{x}" cy="{y + 6}" rx="23" ry="8.5" fill="none" stroke="{gold}" '
                        f'stroke-width="1.6" filter="url(#pm-glow)"/>')
             badge = (f'<circle r="10" fill="#0e181c" stroke="{gold}" stroke-width="1.6"/>'
@@ -342,9 +288,7 @@ def build_overlay(here, match_icons, route):
             if count > 1:
                 badge += (f'<circle cx="9" cy="-8" r="6" fill="{gold}"/><text x="9" y="-4.8" '
                           f'text-anchor="middle" font-size="9" font-weight="700" fill="#1a1608">{count}</text>')
-            svg.append(f'<g transform="translate({x + 20} {y - 24})"><g class="pm-pop" '
-                       f'style="animation-delay:{delay}s">{badge}</g></g>')
-            order += 1
+            svg.append(f'<g transform="translate({x + 20} {y - 24})">{badge}</g>')
     return "".join(svg)
 
 
@@ -355,10 +299,7 @@ def build_map_svg(here, match_icons, route):
     match_icons - {zone: [icon, count]} for zones with a search result (gold badge)
     route       - list of RouteStep (glowing gold paths and numbered stops)
     """
-    x, y = get_map_xy(here)
-    # The map is revealed outwards from the visitor's position.
-    base = BASE_ART.replace("REVEAL_X", str(x)).replace("REVEAL_Y", str(y))
-    return base + build_overlay(here, match_icons, route) + "</g></svg>"
+    return BASE_ART + build_overlay(here, match_icons, route) + "</svg>"
 
 
 # ---------- Self-check ----------
@@ -375,7 +316,6 @@ if __name__ == "__main__":
     assert map_svg.count('class="pm-road"') == len(data.PATHS)
     assert map_svg.count('class="pm-route"') == 0          # no route yet
     assert ">🎢</text>" in map_svg and ">2</text>" in map_svg
-    assert "REVEAL_X" not in map_svg
     assert len(ROADS) == 2 * len(data.PATHS)
 
     # Route view: one glowing path per walked road, every step number is drawn.

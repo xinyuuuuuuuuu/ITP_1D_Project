@@ -34,7 +34,6 @@ st.markdown("""
 .st-key-chatbar {
     position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
     width: min(480px, 100%); padding: 0.6rem 0.9rem 1.1rem; z-index: 100;
-    animation: none !important;
 }
 
 /* Game-style title lettering. */
@@ -47,20 +46,6 @@ h3 {
 [data-testid="stImage"] img {
     border-radius: 14px;
     box-shadow: 0 0 0 1px rgba(232, 198, 106, 0.4), 0 12px 40px rgba(111, 227, 225, 0.14);
-}
-/* New parts of the page rise into place, one after another. */
-@keyframes rise { from { opacity: 0; transform: translateY(18px); } }
-[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"] > div {
-    animation: rise 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
-}
-[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"] > div:nth-child(2) { animation-delay: 0.06s; }
-[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"] > div:nth-child(3) { animation-delay: 0.12s; }
-[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"] > div:nth-child(4) { animation-delay: 0.18s; }
-[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"] > div:nth-child(5) { animation-delay: 0.24s; }
-[data-testid="stMainBlockContainer"] [data-testid="stVerticalBlock"] > div:nth-child(n+6) { animation-delay: 0.3s; }
-/* Respect phones that have "reduce motion" switched on. */
-@media (prefers-reduced-motion: reduce) {
-    [data-testid="stVerticalBlock"] > div { animation: none !important; }
 }
 </style>
 """, unsafe_allow_html=True)
