@@ -96,7 +96,7 @@ def show_map_section():
     zone = st.session_state["zone"]
     hour = st.session_state["hour"]
     weather = st.session_state["weather"]
-    search_text = st.text_input("Search", placeholder="🔍 Search rides, food, shops...",
+    search_text = st.text_input("Search", placeholder="🔍 Search rides, food...",
                                 label_visibility="collapsed")
     category = st.pills("Category", list(data.CATEGORY_ICONS.keys()), key="category",
                         format_func=add_icon, label_visibility="collapsed")

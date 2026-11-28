@@ -371,7 +371,7 @@ function offlineReply(question, zone, hour, weather, prefs, route) {
     for (const r of open.slice(0, 3)) lines.push(`- ${r.name} (${r.zone}): ${getWait(r, hour)} min`);
     return lines.join("\n");
   }
-  return "I can help you find food, shops, restrooms, lockers or first aid, " +
+  return "I can help you find food, lockers or first aid, " +
          "tell you the queue of a ride, or explain your route.";
 }
 /*LOGIC_END*/
@@ -468,7 +468,7 @@ function mapResults() {
 function renderMap() {
   $("section").innerHTML =
     `<div class="list" style="gap:12px">
-       <input type="search" id="search" placeholder="Search rides, food, shops..." aria-label="Search the park" value="${esc(state.search)}">
+       <input type="search" id="search" placeholder="Search rides, food..." aria-label="Search the park" value="${esc(state.search)}">
        <div class="chips" id="cats">${Object.keys(D.CATEGORY_ICONS).map(c =>
          `<button type="button" class="chip" data-cat="${c}" aria-pressed="${c === state.category}">${D.CATEGORY_ICONS[c]} ${c}</button>`).join("")}</div>
        <div class="map" id="map-box"></div>

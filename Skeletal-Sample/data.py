@@ -91,8 +91,7 @@ RIDES = [
 # ---------- Everything else in the directory ----------
 # category decides where the place appears in the directory.
 CATEGORY_ICONS = {
-    "Rides": "🎢", "Food": "🍴", "Shops": "🛍️",
-    "Services": "🛎️", "Amenities": "🚻", "Emergency": "🚑",
+    "Rides": "🎢", "Food": "🍴", "Services": "🛎️", "Emergency": "🚑",
 }
 PLACES = [
     # Food
@@ -100,25 +99,12 @@ PLACES = [
     {"name": "Three Broomsticks", "zone": "Wizarding World of Harry Potter", "category": "Food", "detail": "British"},
     {"name": "Discovery Restaurant", "zone": "Jurassic Park", "category": "Food", "detail": "Western"},
     {"name": "Mel's Drive-In", "zone": "Hollywood", "category": "Food", "detail": "Burgers"},
-    # Shops
-    {"name": "Universal Studios Store", "zone": "Hollywood", "category": "Shops", "detail": "Park souvenirs"},
-    {"name": "1-UP Factory", "zone": "Super Nintendo World", "category": "Shops", "detail": "Nintendo goods"},
-    {"name": "Honeydukes", "zone": "Wizarding World of Harry Potter", "category": "Shops", "detail": "Sweets"},
-    {"name": "Ollivanders", "zone": "Wizarding World of Harry Potter", "category": "Shops", "detail": "Wands"},
-    {"name": "Jurassic Outfitters", "zone": "Jurassic Park", "category": "Shops", "detail": "Dinosaur goods"},
     # Services
     {"name": "Guest Services", "zone": "Hollywood", "category": "Services", "detail": "Tickets, questions, lost and found"},
     {"name": "Stroller & Wheelchair Rental", "zone": "Hollywood", "category": "Services", "detail": "Rental counter"},
     {"name": "Entrance Lockers", "zone": "Hollywood", "category": "Services", "detail": "Coin lockers"},
     {"name": "Hogsmeade Lockers", "zone": "Wizarding World of Harry Potter", "category": "Services", "detail": "Coin lockers"},
     {"name": "ATM", "zone": "Hollywood", "category": "Services", "detail": "Cash machine"},
-    # Amenities
-    {"name": "Hollywood Restroom", "zone": "Hollywood", "category": "Amenities", "detail": "Restroom"},
-    {"name": "Mushroom Kingdom Restroom", "zone": "Super Nintendo World", "category": "Amenities", "detail": "Restroom"},
-    {"name": "Jurassic Restroom", "zone": "Jurassic Park", "category": "Amenities", "detail": "Restroom"},
-    {"name": "Hogsmeade Restroom", "zone": "Wizarding World of Harry Potter", "category": "Amenities", "detail": "Restroom"},
-    {"name": "Family Services", "zone": "Hollywood", "category": "Amenities", "detail": "Baby care and nursing room"},
-    {"name": "Smoking Area", "zone": "Hollywood", "category": "Amenities", "detail": "Smoking area"},
     # Emergency
     {"name": "First Aid Centre", "zone": "Hollywood", "category": "Emergency", "detail": "Nurse on duty"},
     {"name": "First Aid Post", "zone": "Jurassic Park", "category": "Emergency", "detail": "Basic first aid"},

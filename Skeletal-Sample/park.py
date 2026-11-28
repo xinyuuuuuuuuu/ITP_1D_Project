@@ -2,7 +2,7 @@
 # The "backend" of the app, written with classes (OOP). No Streamlit here,
 # so it can be tested on its own by running:  python park.py
 #
-#   Place            - anything in the directory (shop, restroom, ...)
+#   Place            - anything in the directory (food, lockers, ...)
 #   Ride(Place)      - a place that also has a queue
 #   ParkGraph        - the zones joined by walking paths (a weighted graph)
 #   Park             - the whole park: graph + all places
@@ -156,7 +156,7 @@ class Park:
                                      item["category"], item["detail"]))
 
     def get_places(self, category):
-        """Return every place in one category, e.g. "Shops"."""
+        """Return every place in one category, e.g. "Food"."""
         matches = []
         for place in self.places:
             if place.category == category:
