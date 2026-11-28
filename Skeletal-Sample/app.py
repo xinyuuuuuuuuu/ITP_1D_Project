@@ -238,11 +238,10 @@ else:
 # The chat box stays at the bottom of the screen.
 question = st.container(key="chatbar").chat_input("Ask the park assistant")
 if question:
-    with st.spinner("Thinking..."):
-        answer, source = assistant.get_reply(
-            question, st.session_state["messages"], park, st.session_state["zone"],
-            st.session_state["hour"], st.session_state["weather"],
-            st.session_state["preferences"], route)
+    answer, source = assistant.get_reply(
+        question, st.session_state["messages"], park, st.session_state["zone"],
+        st.session_state["hour"], st.session_state["weather"],
+        st.session_state["preferences"], route)
     st.session_state["messages"].append({"role": "user", "content": question})
     st.session_state["messages"].append({"role": "assistant", "content": answer})
     show_chat()
